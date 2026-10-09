@@ -1,6 +1,6 @@
 # Task 1 research handoff
 
-Status: **PARTIAL, first checkpoint**. Continue only Task 1, within the user's approximately 20–30 minute total budget. Do not start Task 2 without approval.
+Status: **PARTIAL, recovered findings secured**. Resume from consolidation/design/review, not source verification or already completed tracing. Continue only Task 1, within the user's approximately 20–30 minute total budget. Do not start Task 2 without approval.
 
 ## Objective and repository identity
 
@@ -31,9 +31,9 @@ The retail game data is absent (README.txt:15). No shotgun script, weapon defini
 
 ## Persistence and access status
 
-At creation of this handoff, the initial checkpoint is not yet claimed saved on GitHub. After committing/pushing, verify `git ls-remote origin refs/heads/research/doom-bfg-weapons-task1` and the commit through native Git. Update this section in the next checkpoint with actual results rather than guessed IDs. A checkpoint's own commit cannot be embedded in itself; use the branch tip and the previous verified checkpoint SHA.
+Verified GitHub checkpoint: `266cc83679677427ec442f8d3972a091bd378c19`; remote branch verification succeeded both before interruption and after resume. The three completed `/tmp/bfg-*-findings.md` files survived and are now included in the report, so no completed research needs repeating. After committing/pushing, verify `git ls-remote origin refs/heads/research/doom-bfg-weapons-task1` and the commit through native Git. Update this section in the next checkpoint with actual results rather than guessed IDs. A checkpoint's own commit cannot be embedded in itself; use the branch tip and the previous verified checkpoint SHA.
 
-GitHub API access to `api.github.com` fails at the proxy CONNECT step with HTTP 403, including an escalated read attempt. This is a domain-policy failure, not evidence that a new token is needed. Native Git reads work. A configuration draft now adds `api.github.com` while preserving known existing destinations; the user can apply it in environment settings. Do not print tokens or invent a PR URL/number. Saving the draft does not establish runtime connectivity or publication. If API access remains blocked, still push and verify the checkpoint; mark PR creation outstanding honestly.
+The prior API domain blocker is resolved on resume: `gh api repos/korpus91/DOOM-3-BFG-Source` succeeded and confirmed parent `id-Software/DOOM-3-BFG`, default branch `master`. Before interruption, API CONNECT had returned HTTP 403. This is a domain-policy failure, not evidence that a new token is needed. Native Git reads work. A configuration draft now adds `api.github.com` while preserving known existing destinations; the user can apply it in environment settings. Do not print tokens or invent a PR URL/number. Saving the draft does not establish runtime connectivity or publication. If API access remains blocked, still push and verify the checkpoint; mark PR creation outstanding honestly.
 
 ## Constraints for any continuing AI
 
@@ -46,3 +46,7 @@ GitHub API access to `api.github.com` fails at the proxy CONNECT step with HTTP 
 - Protect existing user changes; inspect Git status before/after writes.
 - The root agent owns the research files/branch/commits. Parallel source notes are temporary research only.
 - When time is short, stop expanding the trace and commit/push the useful findings; report PARTIAL. No Task 2 without user approval.
+
+## Resume checkpoint
+
+The working tree was clean at resume. No uncommitted repository edits were lost. Recovered completed notes cover all three research branches; integrate their findings rather than repeat the investigation. Remaining steps: consolidate the report and diagram, complete the original Godot design, review exact references, push, and create/verify the fork-only PR. GitHub API is now usable.
