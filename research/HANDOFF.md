@@ -1,6 +1,6 @@
-# Task 1 research handoff
+# Doom BFG weapon research handoff
 
-**Status: source investigation and original Godot design complete; exact retail shotgun reconstruction PARTIAL because retail data is absent.** Task 2 is not authorized. Do not start implementation or further retail-data research without the user's approval.
+**Status: Task 1 source investigation and original Godot design complete; exact retail shotgun reconstruction PARTIAL. Task 2 is authorized and its availability check is complete, but retail inspection is BLOCKED on locating the user's game data.** The user's latest instruction is “Go ahead with task 2.” This approves the previously proposed local read-only retail-data research, not implementation. Do not ask for the same approval again.
 
 ## Objective and exact source identity
 
@@ -47,7 +47,7 @@ Do not repeat source verification, completed research, PR creation or the ready-
 
 1. If this session was interrupted again before final delivery, inspect local status/log and PR head. The full report is already saved at the verified commit above. Commit/push only a still-unpublished final handoff update if one exists; otherwise make no duplicate checkpoint.
 2. Verify the current remote SHA if making any new persistence claim, then deliver the actual commit/PR link and limitations. Keep this PR unmerged unless separately instructed.
-3. After delivery, stop. Await explicit approval for the single next research task described below; no continuation task is enabled or scheduled.
+3. The user subsequently approved Task 2. Continue at the missing-data boundary described below; no autonomous follow-up task is enabled or scheduled.
 
 Tool note for a future necessary PR edit: the preinstalled `gh pr edit` encountered a deprecated Projects-classic GraphQL query. Updating the body through `gh api --method PATCH repos/korpus91/DOOM-3-BFG-Source/pulls/1 --field body=@/tmp/bfg-research-pr-body.md` succeeded. `gh pr ready` also succeeded. No tool installation or replacement was needed.
 
@@ -55,7 +55,21 @@ Tool note for a future necessary PR edit: the preinstalled `gh pr edit` encounte
 
 The repository expressly excludes game data (README.txt:15). The only tracked `.def` is a build export definition; retail scripts, shotgun model/animation files and PK4 archives are absent. Consequently exact retail count/spread/damage, launch event/class, recoil magnitudes, fire/pump/reload/ejection timing, sounds and multiplayer overrides remain unknown. Specific monster script reactions and exhaustive slow-motion/prediction edge cases also remain outside the completed evidence.
 
-**After new approval**, the most useful next task is read-only inspection of locally available, legally owned BFG retail `script/weapon_shotgun.script` and `script/weapon_base.script`, plus `weapon_shotgun`, `projectile_bullet_shotgun`, their referenced damage definitions and relevant animation declarations. Record factual values/state transitions with exact local provenance. Do not publish full licensed scripts or assets. Do not use non-BFG data to fill gaps. This next task has not begun and is not scheduled autonomously.
+**Task 2 is now approved:** read-only inspection of locally available, legally owned BFG retail `script/weapon_shotgun.script` and `script/weapon_base.script`, plus `weapon_shotgun`, `projectile_bullet_shotgun`, their referenced damage definitions and relevant animation declarations. Record factual values/state transitions with exact local provenance. Do not publish full licensed scripts or assets. Do not use non-BFG data to fill gaps.
+
+## Task 2 checkpoint and exact next steps
+
+Task 2 started on 2026-10-09 by inspecting the existing handoff, clean working trees and GitHub PR. The last verified Task 1 head was `2002d9b73746a01654cb7068ffdaf560566d4165`. Preserve it and all prior findings; continue on the existing research branch and fork-only PR, changing only the two research documents.
+
+Completed availability check: no retail candidates were found by a filename search covering `/workspace`, `/mnt` and `/media`, including `.resources`, `.pk4`, scripts, definitions, model/animation files and archive/shotgun names. The checked upload/shared directories were empty, and conventional Steam/game paths under `/home/agent` were absent. Do not repeat that same search unless the user identifies a new location or makes data available. This was a bounded inventory, not a full-machine assertion.
+
+The report's new section 11 records source-confirmed BFG `.resources` handling, file precedence and entity-definition inheritance. Those checks help avoid reading an inactive override or mistaking a missing child key for an absent value. No retail weapon values have been recovered. A text question is pending for the installation/mount path; the blocker is missing files, not missing approval or a network policy rejection.
+
+1. Read any new user response for the BFG installation/data path. If it exists only on the user's own computer, explain that this cloud workspace cannot read that filesystem; obtain platform/path information to determine a local read-only workflow. Do not request licensed-asset uploads or install tools.
+2. Once data is accessible within the authorized scope, identify edition/build, actual containers or loose files, overrides and provenance. Inspect the shotgun script, its base script and only the referenced weapon/projectile/damage/model declarations. Do not execute scripts or game binaries.
+3. Resolve container/file precedence and entity inheritance before reporting effective values. Record factual values and state/timing sequences with exact local paths, hashes and lines. Keep raw licensed content out of Git and do not copy it into Shooter 1946.
+4. Reconcile those facts with Task 1's native functions, update these two documents, then commit/push and verify the GitHub SHA and fork-only PR. If files remain unavailable, report PARTIAL/BLOCKED without inventing retail values.
+5. Do not implement the Godot controller or start another task without an instruction authorizing it.
 
 ## Constraints for every continuing AI
 
@@ -67,4 +81,4 @@ The repository expressly excludes game data (README.txt:15). The only tracked `.
 - Do not claim a specific retail shotgun launch event, pellet count, damage or timing without the absent data.
 - Never push to or open a pull request against upstream `id-Software/DOOM-3-BFG`.
 - Save useful changes frequently, preferably about every ten active minutes. If interrupted/short on budget, checkpoint first and report PARTIAL honestly.
-- No Task 2 or implementation without approval.
+- Task 2 retail research is approved. Implementation and other tasks remain outside the authorized scope.

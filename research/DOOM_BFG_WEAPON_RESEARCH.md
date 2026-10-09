@@ -1,6 +1,6 @@
 # Doom 3 BFG weapon research for Shooter 1946
 
-**Task 1 source investigation and original controller design completed; exact retail shotgun reconstruction remains PARTIAL.** The public C++ source confirms the execution machinery, but omits the scripts, definitions and animation assets that specify the retail shotgun's numbers and choreography. No game was compiled or run, no tools were installed, and no Shooter 1946 files or assets were changed. Task 2 has not started.
+**Task 1 source investigation and original controller design completed; exact retail shotgun reconstruction remains PARTIAL. Task 2 is now authorized, with retail-data inspection blocked on locating the files.** The public C++ source confirms the execution machinery, but omits the scripts, definitions and animation assets that specify the retail shotgun's numbers and choreography. No game was compiled or run, no tools were installed, and no Shooter 1946 files or assets were changed.
 
 In plain English: pressing fire sets a signal for a weapon script. That script decides when a shot actually happens. The engine moves the visible gun and kicks the camera using separate calculations. Its ordinary multi-projectile event spends ammunition once, creates independently scattered pellets, and lets each collision damage its target separately. Pumping, hand movement and firing cadence cannot be reconstructed fully without the missing retail data.
 
@@ -341,7 +341,28 @@ Future validation criteria, **not tests claimed to have run**: equivalent recove
 
 The missing retail data prevents an exact retail shotgun specification: launch-event choice, pellet count and spread, ammo/cadence rules, projectile class/speed/fuse, damage definition, recoil parameters, sound cues, pump/reload/ejection markers, animation curves and single-player/multiplayer overrides. Specific monster reactions also depend on absent AI scripts and model data. Clock/prediction edge cases and actual runtime behavior were recorded as limits, not claimed verified by execution.
 
-**The single most useful next research task, requiring a new approval, is a local read-only inspection of the user's legally owned Doom 3 BFG retail shotgun script plus its referenced weapon, projectile and damage definitions.** Start with `script/weapon_shotgun.script`, `script/weapon_base.script`, `weapon_shotgun`, `projectile_bullet_shotgun` and the referenced `def_damage`; then record relevant animation declarations/timing markers. Record factual values and state sequences with local provenance. Do not upload licensed assets or full retail scripts, fetch non-BFG substitutes, or implement Shooter 1946 as part of that inspection.
+**The user has approved Task 2: local read-only inspection of their legally owned Doom 3 BFG retail shotgun script plus its referenced weapon, projectile and damage definitions.** Start with `script/weapon_shotgun.script`, `script/weapon_base.script`, `weapon_shotgun`, `projectile_bullet_shotgun` and the referenced `def_damage`; then record relevant animation declarations/timing markers. Record factual values and state sequences with local provenance. Do not upload licensed assets or full retail scripts, fetch non-BFG substitutes, or implement Shooter 1946 as part of that inspection.
+
+## 11. Task 2 availability checkpoint — 2026-10-09
+
+**PARTIAL / BLOCKED: authorization is present; retail files have not been located.** Task 2 began by inspecting the saved handoff, Git history and available directories. The existing Task 1 checkpoint `2002d9b73746a01654cb7068ffdaf560566d4165` was still the head of the clean research branch and GitHub PR #1. The other two repositories were clean. No completed weapon-mechanics research was repeated.
+
+A filename inventory including hidden files, excluding Git internals, searched `/workspace`, `/mnt` and `/media` for `.resources`, `.pk4`, `.script`, `.def`, `.md5anim`, `.md5mesh`, common archive files and shotgun names. It found no BFG retail candidates. The `.def` result was the already-known build export file, not game data. `/mnt`, `/media`, `/workspace/library-files`, `/workspace/scratch` and `/workspace/shared/downloads` were empty. Conventional Steam/game directories checked under `/home/agent` were absent. This is a bounded search result, not a claim that every possible filesystem location was examined. The user has been asked for the installation or mounted-data path; no replacement data was downloaded.
+
+### Container and effective-value checks needed before reading retail numbers
+
+These additional findings are from the same pinned public source, not from retail files:
+
+- **Include `.resources` containers in the inventory.** `idFileSystemLocal::AddGameDirectory`, `neo/framework/FileSystem.cpp` **2433**, enumerates that extension (**2454**), sorts the results (**2455**) and loads/appends containers (**2461–2462**). A search for PK4 files alone would be insufficient. `idResourceContainer::Init`, `neo/framework/File_Resource.cpp` **55**, specifically handles `_ordered.resources` (**57–60**) and reads a custom indexed header/table (**68–91**). A ZIP-only inspection is not a valid test for contained scripts.
+- **Resolve which copy of a virtual file wins.** `idFileSystemLocal::GetResourceCacheEntry`, `neo/framework/FileSystem.cpp` **2688**, normalizes names (**2698–2699**) and searches loaded containers backward (**2700–2713**). `fs_resourceLoadPriority` defaults to 1 (**290**); `OpenFileReadFlags` (**2780**) then checks resource files before loose paths (**2813–2817, 2823–2832**). Setting it to zero moves resource lookup after loose paths (**2926–2929**). A loose script by itself need not be the active version.
+- **Follow inherited entity definitions.** `idDeclEntityDef::Parse`, `neo/framework/DeclEntityDef.cpp` **56**, gathers `inherit*` references (**100–115**) and applies them with `SetDefaults` (**118–120**). `idDict::SetDefaults`, `neo/idlib/Dict.cpp` **179–191**, fills only missing keys. Explicit child values therefore win; among inherited defaults, the first applied value fills a missing key before later parents. Record the source of each effective value.
+- **Do not merge every similarly named declaration.** `idDeclFile::LoadAndParse`, `neo/framework/DeclManager.cpp` **613**, warns/skips a declaration already defined in another file (**735–738**). Declaration duplication differs from replacing the same virtual file in another container. Actual installed files and load order are required to resolve the outcome.
+
+### Resume at the missing-data boundary
+
+The next input needed is the user's BFG installation or extracted-data location accessible to this environment. Once available, inventory only that location, establish edition/build and mod/override provenance, and inspect the shotgun dependency chain read-only. Record each fact with virtual path, containing file, local hash/build provenance, declaration or function and exact lines. Separate literal values, inherited values and calculations. Record state transitions and timing units, then reconcile them with the confirmed native functions above.
+
+No retail pellet count, spread, damage, recoil amount or pump/reload timing was obtained in this checkpoint. Approval to perform Task 2 already exists; a continuing AI should ask only for missing access/location information, not repeat an approval request. No licensed content should be committed or uploaded, and no implementation is authorized.
 
 ## Checkpoint and validation record
 
