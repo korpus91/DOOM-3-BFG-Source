@@ -1,6 +1,16 @@
 # Doom BFG weapon research handoff
 
-**Current status, 2026-10-10: Task 1 source investigation and original Godot design complete; Task 2 source-only continuation complete; exact retail shotgun reconstruction PARTIAL / BLOCKED on read-only access to PANZERV's BFG installation.** The user explicitly authorized continuation, committing/pushing progress and updating existing PR #1, while preserving all work and leaving Shooter 1946 untouched. No approval is missing. The earlier “Go ahead with task 2” instruction and checkpoints below are historical context, not a pending approval or instruction to restart.
+**Current status, 2026-10-10: Task 1 and Task 2 source-only research complete; retail shotgun reconstruction PARTIAL / BLOCKED on unpacked BFG data. PANZERV local Windows access is verified. The user-identified D:\Games location contains BFG installer packages, not an accessible installed base folder; existing 7-Zip cannot list them.** The user explicitly authorized continuation, committing/pushing progress and updating existing PR #1, while preserving all work and leaving Shooter 1946 untouched. No approval is missing. The earlier “Go ahead with task 2” instruction and checkpoints below are historical context, not a pending approval or instruction to restart.
+
+## Latest local checkpoint — 2026-10-10
+
+- Local shell verified `PANZERV` / DNS `PanzerV`, starting in `C:\Users\Korpus\Workbench`; Windows filesystem is readable. Historical cloud-access restrictions below no longer describe this session.
+- Existing research branch cloned with authorization into `C:\Users\Korpus\Workbench\Projects\Code\2026-10-10-DOOM-3-BFG-Source`, starting from live Git/PR head `133061c97717523a9b055f7916cda3a187182ee6`. No reset, new research branch, history rewrite or new PR. Only the two research documents changed.
+- Report section 13 records the actual local search and packaging evidence. Steam's three registered libraries contain no `appmanifest_208200.acf`. User clarified that files are in `D:\Games`; the BFG candidate there contains four `.dxn` files and `Setup.exe`, with no subdirectories/base folder. The separate DOOM 3 Collection candidate contains two ISO images of unverified BFG relevance.
+- Existing 7-Zip 26.01 cannot statically list either `Data01.dxn` or `Setup.exe` (exit 2). No setup/game execution, installation, mounting or whole-installation extraction was performed. No raw licensed payload was uploaded or committed.
+- No retail weapon value was resolved. Active files, declaration inheritance, multiplayer alternatives, animation variants, timings, recoil, sounds and effects remain unknown. Installed build and override conditions are also unverified.
+- **Next step:** identify an accessible unpacked BFG `base` folder or an already available compatible read-only package reader. Keep the no-install/no-execution constraints. Resume at section 12's dependency table; do not restart source research or re-run the same directory searches. This is a data-format/access blocker, not missing research approval.
+- Publish this factual checkpoint to the same branch and existing fork-only PR #1; leave it open/unmerged. Verify live branch/PR SHA and both remote document blobs before claiming upload completion. Use the live tip rather than historical SHA notes below.
 
 ## Objective and exact source identity
 

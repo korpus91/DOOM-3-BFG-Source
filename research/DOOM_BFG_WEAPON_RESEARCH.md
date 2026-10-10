@@ -1,6 +1,6 @@
 # Doom 3 BFG weapon research for Shooter 1946
 
-**Task 1 source investigation and original controller design completed. Task 2's source-only continuation is completed; exact retail shotgun reconstruction remains PARTIAL, blocked on read-only access to the installation on PANZERV.** Section 12 records the 2026-10-10 continuation and precise data requirements. The public C++ source confirms the execution machinery, but omits the scripts, definitions and animation assets that specify the retail shotgun's numbers and choreography. No game was compiled or run, no tools were installed, and no Shooter 1946 files or assets were changed.
+**Task 1 source investigation and original controller design completed. Task 2's source-only continuation is completed; exact retail shotgun reconstruction remains PARTIAL. Local Windows access to PANZERV was verified on 2026-10-10, but an unpacked BFG installation was not located. The user-identified D:\Games location contains BFG installer packages that the existing archive tool cannot list.** Section 12 records the 2026-10-10 continuation and precise data requirements. The public C++ source confirms the execution machinery, but omits the scripts, definitions and animation assets that specify the retail shotgun's numbers and choreography. No game was compiled or run, no tools were installed, and no Shooter 1946 files or assets were changed.
 
 In plain English: pressing fire sets a signal for a weapon script. That script decides when a shot actually happens. The engine moves the visible gun and kicks the camera using separate calculations. Its ordinary multi-projectile event spends ammunition once, creates independently scattered pellets, and lets each collision damage its target separately. Pumping, hand movement and firing cadence cannot be reconstructed fully without the missing retail data.
 
@@ -454,3 +454,56 @@ The 2026-10-10 continuation checked 31 new source path/range groups for valid bo
 The initial source findings were pushed as `266cc83679677427ec442f8d3972a091bd378c19`. After interruption, the working tree was clean and three completed scratch notes survived; those were preserved in pushed checkpoint `a40eb56954cb2cffe152de1ef0f11053e14b5d7a` before consolidation. That commit retains the original recovered notes in history; this report incorporates their findings with reviewed corrections, including mutable damage feedback, ellipse view-axis aiming, the physics function reference, client guards and sound lookup.
 
 A read-only second review checked the principal recoil equations, damage/reaction paths, animation frame-command distinction and cited source locations against the pinned source. No source files changed. Validation is static inspection, reference checking and documentation/Git checks, not a game build or runtime test. Publication and exact continuation instructions are recorded in [HANDOFF.md](HANDOFF.md). The fork-only pull request is [korpus91/DOOM-3-BFG-Source#1](https://github.com/korpus91/DOOM-3-BFG-Source/pull/1); inspect its current head for the final document commit.
+
+
+## 13. PANZERV local continuation and packaging blocker — 2026-10-10
+
+This section supersedes the cloud-access blocker in sections 11–12; those historical findings remain intact. The shell actually ran on PANZERV (DNS name `PanzerV`), with working directory `C:\Users\Korpus\Workbench` and readable local `C:\Windows`. No retail script, declaration or animation payload was recovered, so the missing numerical values in section 12 remain unknown.
+
+### Repository continuation
+
+A bounded search of likely project directories found no existing Doom checkout. With the user's explicit clone authorization, the existing branch was cloned into `C:\Users\Korpus\Workbench\Projects\Code\2026-10-10-DOOM-3-BFG-Source`. Both live remote branch and open PR #1 initially resolved to `133061c97717523a9b055f7916cda3a187182ee6`. The checkout was clean and all prior commits were retained. Origin remains exclusively `https://github.com/korpus91/DOOM-3-BFG-Source.git`; no new research branch or PR was created. Workbench's separate repository configuration and pre-existing modifications were left untouched.
+
+### Installation-location evidence
+
+Steam's machine registry entry identifies `D:\Programs\Steam`. Its `steamapps\libraryfolders.vdf` lists `D:\Programs\Steam` at line 5, `F:\SteamLibrary` at line 50 and `Z:\SteamLibrary` at line 79. SHA256 of that metadata file: `146689c2196b5f3710ccdc31e01986b1a4e2c23096d36fd327d41330485d7d68`. All three library roots were accessible. None contained `steamapps\appmanifest_208200.acf`, and their immediate `steamapps\common` directories contained no BFG-named installation. This establishes missing Steam build evidence in those libraries, not a claim about every disk location.
+
+A bounded search of likely game roots and uninstall/shortcut entries did not identify an installed BFG path. The user then explicitly identified `D:\Games`; a filename-only recursive search inside that root found no `Doom3BFG*.exe`, `weapon_shotgun.script` or `appmanifest_208200.acf`. The `.resources` matches belonged to other games; their contents were not inspected or substituted. Enumeration errors were suppressed, so this is not an exhaustive proof of absence from inaccessible folders. No broader whole-drive content search was performed.
+
+The relevant candidate is `D:\Games\[dixen18] DOOM 3 BFG Edition`. It has **five files and zero subdirectories**, with no installed `base` folder:
+
+| Physical filename in that directory | Length, bytes | Read-only identification |
+|---|---:|---|
+| `Data01.dxn` | 596853677 | Bytes 0–3: `41 72 43 01` |
+| `Data02.dxn` | 616136865 | Bytes 0–3: `41 72 43 01` |
+| `Data03.dxn` | 218566303 | Bytes 0–3: `41 72 43 01` |
+| `Data04.dxn` | 7034965 | Bytes 0–3: `41 72 43 01` |
+| `Setup.exe` | 3002918 | Bytes 0–1: `4d 5a`; not executed |
+
+These are packaging observations, not proof of the packaged game's exact edition, build, integrity or effective assets. `D:\Games\DOOM 3 Collection` separately contains `DVD1.iso` (4365170688 bytes) and `DVD2.iso` (4454586368 bytes). Their names do not establish BFG identity; neither image was mounted or used as weapon evidence.
+
+Existing `C:\Program Files\7-Zip\7z.exe`, reporting version 26.01 x64, was used only for static listing (`l -slt`) of `Data01.dxn` and `Setup.exe`. Both attempts exited 2 with `Cannot open the file as archive`. No game/setup executable or extracted code was run. No installer was unpacked, no tool installed, and no retail file changed. The observed header alone is insufficient to decode the payload or recover its virtual resource index.
+
+### Actual research outcome and precise next boundary
+
+Local Windows access is now resolved. **Retail shotgun reconstruction is still blocked by packaging/access to unpacked data**, rather than by a cloud filesystem. There is no verified active virtual script, effective inherited weapon/projectile/damage/brass definition, multiplayer selection, model declaration, animation variant or binary metadata to report. Pellet count/spread, both recoil parameter sets, launch-to-launch cadence, reload transfer, pump/ejection timing, sound/effect markers and skeleton/curve data remain unknown. No runtime measurements are claimed.
+
+Installed executable version/hash, Steam build/depot identity, active mode, launch/config overrides and resource precedence cannot be established from these installer filenames. An accessible unpacked BFG `base` directory and its executable/build metadata, or an already available compatible read-only package inspection route, is required. The current no-install/no-execution constraints remain in force. Do not run `Setup.exe` to bypass this blocker. Do not repeat the completed source research or unrelated-game search. Resume directly at section 12's dependency/provenance table once the unpacked files or a compatible existing reader are identified.
+
+Only factual inventory/provenance is published. No licensed script/asset payload was uploaded to this chat or committed. This checkpoint changes only this report and `research/HANDOFF.md`.
+
+
+### Local package SHA256 provenance
+
+Hashes identify the physical files inventoried above, not decoded retail assets. No virtual paths or declaration lines are available inside the unreadable packages.
+
+| Physical filename under `D:\Games\[dixen18] DOOM 3 BFG Edition` | SHA256 |
+|---|---|
+| `Data01.dxn` | `68d2f7db610229d2ac91305ac4c7ca452c93004ee5edf34bc2027a36687fd5ad` |
+| `Data02.dxn` | `d1104f99a3774a24adc185d5a39282e9d43b883d4fd26636ed1d03f68bd2e4b0` |
+| `Data03.dxn` | `2dfcd1ce2daa4e20a6d49aedc5e7e5c57a1c3c5b40bbe224178b2bf6d314b147` |
+| `Data04.dxn` | `b181831fdefc25740b42be50917d58859b78f0bd51382abafabc6d239d285d21` |
+| `Setup.exe` | `c0d2e2928ba663b66677eaf850a97a0ca3c7751af7a90c1e729fc9a0da2033b8` |
+
+The existing static listing tool `C:\Program Files\7-Zip\7z.exe` has SHA256 `2bff20bd679d45166b8c2d039044a4ca16189e6d69ff9c82345b4c1306986ec4`.
+`C:\Program Files\WinRAR\UnRAR.exe` (reported UNRAR 7.23 x64) was also tried with read-only `l` on `Data01.dxn`; it reported `is not RAR archive`. Its exit code was 0 despite that diagnostic, so no successful package listing is inferred. No compatible `arc`/`unarc`/`freearc` command was found on PATH.
