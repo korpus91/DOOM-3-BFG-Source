@@ -110,3 +110,10 @@ The report's new section 11 records source-confirmed BFG `.resources` handling, 
 - Never push to or open a pull request against upstream `id-Software/DOOM-3-BFG`.
 - Save useful changes frequently, preferably about every ten active minutes. If interrupted/short on budget, checkpoint first and report PARTIAL honestly.
 - Task 2 retail research is approved. Implementation and other tasks remain outside the authorized scope.
+
+
+## Active extraction checkpoint — 2026-10-10
+
+The user explicitly authorized unpacking every Doom/BFG candidate under `D:\Games` and set an active completion goal. Section 14 now supersedes the previous assumption that no archive inspection route exists: all four BFG FreeArc indexes were decoded with CRC checks (399 files), and the BFG installer metadata plus all 22 embedded files passed SHA1 verification. Bundled archiver components were recovered without running setup. Local extraction is proceeding via a dedicated .NET helper with a larger worker-stack reservation. The original package files are unchanged. Both collection ISOs' Doom-content directories have been extracted locally; nested installers remain separate, and no non-BFG weapon values are used.
+
+Scratch/helper/index/output directory: `C:\Users\Korpus\Workbench\Inbox\2026-10-10-bfg-package-inspection`. Resume the running extraction, validate output CRCs against the package indexes, then inspect the resource indexes and exact shotgun dependencies per sections 11–12. Never execute game or installer binaries/scripts or upload licensed data. Only the two research documents are committed. This is an intermediate factual checkpoint, not completion of retail reconstruction.

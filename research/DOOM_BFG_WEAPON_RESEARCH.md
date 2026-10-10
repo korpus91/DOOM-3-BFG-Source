@@ -507,3 +507,31 @@ Hashes identify the physical files inventoried above, not decoded retail assets.
 
 The existing static listing tool `C:\Program Files\7-Zip\7z.exe` has SHA256 `2bff20bd679d45166b8c2d039044a4ca16189e6d69ff9c82345b4c1306986ec4`.
 `C:\Program Files\WinRAR\UnRAR.exe` (reported UNRAR 7.23 x64) was also tried with read-only `l` on `Data01.dxn`; it reported `is not RAR archive`. Its exit code was 0 despite that diagnostic, so no successful package listing is inferred. No compatible `arc`/`unarc`/`freearc` command was found on PATH.
+
+
+## 14. Authorized package extraction continuation — 2026-10-10
+
+The user explicitly broadened the scope to unpack every Doom/BFG candidate under `D:\Games` and continue autonomously. Section 13's archive-reader blocker was investigated further rather than treated as permanent. Originals remain read-only; all extracted files and inspection helpers are local under `C:\Users\Korpus\Workbench\Inbox\2026-10-10-bfg-package-inspection`, outside the repository. No installer or game executable is run. No tools were downloaded or installed; public archive-format source files were consulted as text references.
+
+### Validated BFG package indexes
+
+A small local Python reader decoded all four FreeArc control directories using the existing standard-library LZMA implementation. Both local-descriptor CRC32 and decoded directory CRC32 passed for every package. It follows the [FreeArc format specification](https://github.com/Bulat-Ziganshin/FA/blob/master/FreeArc-archive-format.md), [integer encoding](https://github.com/mirror/freearc/blob/master/ByteStream.hs) and [directory layout](https://github.com/mirror/freearc/blob/master/ArhiveDirectory.hs). Package SHA256 hashes are in section 13. Offsets below are physical zero-based byte offsets within those exact packages; the directory CRC authenticates index decoding, not decompression of every asset.
+
+| Package | Directory offset | Directory CRC32 | File count | Unpacked bytes | Solid-block method |
+|---|---:|---|---:|---:|---|
+| `Data01.dxn` | 596853218 | `cc55968e` | 18 | 1553970890 | `srep_old+lolz` |
+| `Data02.dxn` | 616135804 | `9f188b20` | 63 | 6389005568 | `srep_old+lolz` |
+| `Data03.dxn` | 218565276 | `78254f79` | 51 | 277060544 | `bpk+srep_old` |
+| `Data04.dxn` | 7031744 | `30af4425` | 267 | 16457224 | `srep_old+lolz` |
+
+Every solid block starts at physical byte 31. Data01 lists separate `ENGTEXT` / `RUSTEXT` `_common.resources` and `_ordered.resources`, as well as English/Russian voice resource variants. These language choices must remain separate; extraction does not establish an active installed language or override order. Data02 lists 63 map resource containers. Data03 contains the Bink/video dependency group. Data04 lists common files, `Doom3BFG.exe`, and `goggame-1135892318` metadata. The latter is GOG-package evidence; it is not a verified Steam build or decoded executable version. Total indexed files: 399. Raw indexes remain local.
+
+### Installer metadata and decoder recovery
+
+The BFG `Setup.exe` contains an Inno Setup 5.5.0 Unicode header at byte 2399494. Its two control streams begin at bytes 2399558 and 2426249: stored sizes 26682 and 740, decoded sizes 187364 and 1628. Header and 4096-byte subblock CRC32 checks passed. The latter stream describes 22 embedded files in 74-byte records. The compressed content chunk starts with `zlb` plus byte `1a` at offset 279552 and decodes to 5799743 bytes. Inno executable-call filtering was reversed as necessary; all 22 stored SHA1 checks passed. Relevant [Inno stream](https://github.com/dscharrer/innoextract/blob/master/src/stream/block.cpp), [data-record](https://github.com/dscharrer/innoextract/blob/master/src/setup/data.cpp), and [executable filter](https://github.com/dscharrer/innoextract/blob/master/src/stream/exefilter.hpp) source was consulted without installing innoextract.
+
+Only the packaged archive-decoding dependencies (`unarc.dll`, `cls-srep_old.dll`, `cls-bpk.dll`, `cls-lolz.dll`, and its x86/x64 helper executables) were recovered for decompression. They are archiver components, not the game's executable or installer scripts. The installer itself was never run. An inspection host built with the pre-existing .NET compiler calls the documented FreeArc extraction API, writes only into dedicated scratch subdirectories, and refuses overwrites. The initial PowerShell host encountered native stack overflow; a dedicated helper with a 32 MiB default stack successfully reached archive progress. This is helper compilation, not a game build. Payload extraction and individual file validation are still in progress at this checkpoint; no weapon values are inferred from index names.
+
+### Collection ISO inspection
+
+Both `DOOM 3 Collection` ISO images were opened by existing 7-Zip. Their Doom-content directories were copied locally: DVD1 yielded 20 files / 4252992367 bytes; DVD2 yielded 12 files / 4342431456 bytes. Disc 1 identifies Nightmare, Phobos Anomaly, and Resurrection of Evil; disc 2 identifies Doom III, New Star Station, and Padshiy Angel. Their nested installers identify Wise or older Inno formats (5.0.4, 5.1.2, 5.3.9). No BFG resource layout was established from these collection entries. They remain separate from the BFG package, and no original-Doom-3 value is substituted for BFG evidence.
