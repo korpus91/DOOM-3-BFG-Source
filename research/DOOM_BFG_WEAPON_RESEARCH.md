@@ -1,6 +1,6 @@
 # Doom 3 BFG weapon research for Shooter 1946
 
-**Task 1 source investigation and original controller design completed; exact retail shotgun reconstruction remains PARTIAL. Task 2 is now authorized, with retail-data inspection blocked on locating the files.** The public C++ source confirms the execution machinery, but omits the scripts, definitions and animation assets that specify the retail shotgun's numbers and choreography. No game was compiled or run, no tools were installed, and no Shooter 1946 files or assets were changed.
+**Task 1 source investigation and original controller design completed. Task 2's source-only continuation is completed; exact retail shotgun reconstruction remains PARTIAL, blocked on read-only access to the installation on PANZERV.** Section 12 records the 2026-10-10 continuation and precise data requirements. The public C++ source confirms the execution machinery, but omits the scripts, definitions and animation assets that specify the retail shotgun's numbers and choreography. No game was compiled or run, no tools were installed, and no Shooter 1946 files or assets were changed.
 
 In plain English: pressing fire sets a signal for a weapon script. That script decides when a shot actually happens. The engine moves the visible gun and kicks the camera using separate calculations. Its ordinary multi-projectile event spends ammunition once, creates independently scattered pellets, and lets each collision damage its target separately. Pumping, hand movement and firing cadence cannot be reconstructed fully without the missing retail data.
 
@@ -364,7 +364,92 @@ The next input needed is the user's BFG installation or extracted-data location 
 
 No retail pellet count, spread, damage, recoil amount or pump/reload timing was obtained in this checkpoint. Approval to perform Task 2 already exists; a continuing AI should ask only for missing access/location information, not repeat an approval request. No licensed content should be committed or uploaded, and no implementation is authorized.
 
+## 12. Task 2 source-only continuation — 2026-10-10
+
+### Exact recovery boundary
+
+Resumed from **`7ae6c7dc0e22ebe66c1da394c21d723f023894a9`**, the existing research branch and PR #1 head. That checkpoint had completed the bounded retail-file availability check and section 11's container precedence/inheritance findings, but had inspected no retail shotgun data. Task 1 and the original controller proposal were already complete; they were not restarted.
+
+The current workspace initially had a clean `work` branch at the pinned source base, no local research branch, no stash and no untracked or ignored files in this repository. The research branch was fetched from the user's existing fork and checked out in the same repository. All five prior research commits remain ancestors. The three historical `/tmp/bfg-*-findings.md` files named in the handoff were not present in this session; their previously committed contents remain in `a40eb56954cb2cffe152de1ef0f11053e14b5d7a`. No reset, history rewrite or replacement repository was used in this continuation.
+
+The user identified **PANZERV, a Windows PC**, as the retail game's location. This cloud session has no configured VPN, TCP destination grant or supplied local filesystem connection to that PC. A Windows path alone would not grant access. The earlier retail-directory search was not repeated. The findings below use only the pinned source; they do not claim access to PANZERV or execution of its game.
+
+### Script time and the actual firing deadline
+
+The following fills the timing-interpretation gap left for Task 2; it does not supply a missing retail firing interval.
+
+| Operation | Verified native meaning | Source at the pinned commit |
+|---|---|---|
+| Script `getTime()` | Returns `realClientTime` converted from milliseconds to seconds | `neo/d3xp/script/Script_Thread.cpp:1099–1101`, `idThread::Event_GetTime` |
+| Script `wait(seconds)` | Converts seconds with `SEC2MS`, pauses, and sets `waitingUntil = gameLocal.time + milliseconds`; a manually controlled thread cannot execute while that deadline is in the future | `neo/d3xp/script/Script_Thread.cpp:898–909, 959–960, 659–664` |
+| Script `waitFrame()` | Pauses; for a manually controlled thread it deliberately sets no future time, so this is not a fixed 1/24-second delay | `neo/d3xp/script/Script_Thread.cpp:917–924` |
+| Weapon script scheduling | Weapon construction selects manual thread control; `UpdateScript` runs on new simulation frames and can service pending state transitions | `Weapon.cpp:217–219, 2186–2208` |
+| Weapon animation completion | `playAnim` stores the selected clip's end time in the weapon's single `animDoneTime`; `animDone(channel, blendFrames)` tests that field minus `FRAME2MS(blendFrames)` against `gameLocal.time`, without using its channel argument | `Weapon.cpp:3247–3269, 3305–3309` |
+| Animation blend setting | `setBlendFrames` also stores one shared field, ignoring its channel argument; `playAnim` and `playCycle` reset it after use | `Weapon.cpp:3318–3319, 3268, 3296` |
+
+Consequently, a script deadline computed with `getTime()` must retain its clock identity when compared with a timed wait or animation check. The actual delay is observed when the weapon thread next executes and its condition passes, not necessarily at an exact wall-clock instant. Slow motion and prediction can separate these clocks; this continuation does not claim a runtime audit of those cases.
+
+When the retail script is available, follow the path from one **successful launch call to the next**, recording every wait, deadline comparison, ammo/attack test, animation check and state transition. A fire clip's duration, a pump sound marker and a launch-to-launch interval need not be the same number. `Event_PlayAnim` returns integer zero (`Weapon.cpp:3269`), not the clip's duration. Also record which animation last wrote `animDoneTime` before each completion check; assuming independent weapon-channel deadlines would misread this implementation.
+
+### Effective definitions and reload accounting
+
+**Multiplayer lookup is an additional selection step.** `idGameLocal::FindEntityDef`, `Game_local.cpp:3362–3370`, first tries `<requested_name>_mp` in multiplayer and falls back to the requested name if that lookup fails. `FindEntityDefDict` uses that same resolver (`Game_local.cpp:3378–3380`). The weapon and its projectile/brass references are looked up through it (`Weapon.cpp:970, 1056, 1145`). This is selection of a declaration, not automatic merging of the normal and `_mp` versions; inheritance is the separate process recorded in section 11. Check this selection at each dependency lookup, and label single-player and multiplayer results separately. These lines do not prove which retail `_mp` declarations exist.
+
+**Reload changes gameplay ammunition at the script's call site.** `idWeapon::Event_AddToClip`, `Weapon.cpp:3134–3156`, adds the requested amount, caps it by clip capacity and available ammunition, and calls inventory `UseAmmo` with the actual increase. The ordinary launch event only debits inventory directly for clipless weapons (`Weapon.cpp:3564–3570`); for a weapon with a clip it decrements that clip under its ammo/infinite-ammo guards (`3572–3574`). This refines section 5's shorthand “once per event”: it is not a second inventory withdrawal for every pellet of a clip-fed shot. The missing script must establish whether a shell insertion calls `addToClip`, how many it requests, and whether interruption happens before or after that call. Animation appearance alone cannot establish the loaded-shell time.
+
+### Animation variants, binary data and timing units
+
+`idDeclModelDef::ParseAnim` strips a numeric suffix to form an animation alias (`anim/Anim_Blend.cpp:2504–2520`). `idAnimator::GetAnim(name)` delegates to the model definition (`3472–3477`): a name ending in a digit selects its exact full name, while an unsuffixed name randomly selects among matching aliases (`2927–2959`). Model declarations can inherit animations (`2664–2680`), replace an inherited full name (`2484–2501`) and remove inherited clips (`2744–2764`). All matching variants and inherited definitions are therefore needed before claiming a unique fire/pump/reload duration. No particular shotgun clip name or variant count has been established.
+
+For text animations, `idMD5Anim::LoadAnim` reads `numFrames` and `frameRate` (`anim/Anim.cpp:209–224`) and computes length in integer milliseconds as `((N - 1) * 1000 + F - 1) / F` (`351`), equivalent to rounding `(N - 1) * 1000 / F` upward for positive frame rate. It intentionally excludes the last frame interval. `idAnimBlend::PlayAnim` sets end time to start plus that length and sets one cycle (`anim/Anim_Blend.cpp:1439–1442`); the blend-in duration is stored separately (`1445–1449`). Do not add blend-in time to the clip length to estimate cadence.
+
+The same loader first tries **`generated/anim/<referenced animation path with extension .bMD5anim>`** (`anim/Anim.cpp:173–187`; `binaryLoadAnim` defaults to 1 at `35`). `LoadBinary` validates magic/timestamp according to production mode and reads stored frame count, frame rate and animation length (`368–388`). Thus a retail installation may provide the needed animation in binary form even when its text `.md5anim` is absent. Read the actual active binary's stored metadata; the text-loader equation alone is not proof of the installed length. Model loading similarly constructs `generated/rendermodels/<referenced model path with a b-prefixed extension>` and tries supported binary models (`neo/renderer/ModelManager.cpp:320–333`), giving `.bmd5mesh` for an `.md5mesh` path.
+
+| Quantity to record | Units/interpretation confirmed by source | Retail shotgun value |
+|---|---|---|
+| `muzzle_kick_time`, `muzzle_kick_maxtime` | Definition seconds converted by `SEC2MS`; visible-gun recovery envelope, not a fire-rate gate (`Weapon.cpp:985–986`; section 4) | Unknown |
+| `muzzle_kick_angles`, `muzzle_kick_offset` | Pitch/yaw/roll degrees and source-space displacement, respectively (`Weapon.cpp:987–988`; section 4) | Unknown |
+| `recoilTime`, `recoilAngles` | Camera duration in integer milliseconds and stored angular parameters; actual camera offset also depends on the gated quadratic calculation (`PlayerView.cpp:326–334`; section 4) | Unknown |
+| `ejectBrassDelay` | Integer milliseconds, passed to `PostEventMS`; a negative value suppresses automatic scheduling in the ordinary and ellipse launch events (`Weapon.cpp:1141, 3701–3702, 3841–3842`) | Unknown |
+| `flashTime` | Definition seconds converted to milliseconds (`Weapon.cpp:1083`); effect lifetime, not cadence | Unknown |
+| Script waits/deadlines | Seconds at the script interface; distinguish `getTime` from `wait` clocks as above | Unknown |
+| Blend frames | Integer milliseconds `(frames * 1000) / 24`, independent of a clip's own frame rate (`anim/Anim.h:48–49`) | Unknown |
+| Animation frame command `k` | Declarations are 1-based (`anim/Anim_Blend.cpp:292–297`). At unit playback rate, the nominal boundary is `(k - 1) / F` seconds; dispatch services crossed frames, with an explicit first-frame case and no dispatch at/before clip start (`1778–1798`; `anim/Anim.cpp:577–590`) | Unknown |
+
+The frame-command formula is a nominal source-derived boundary, not a measured execution timestamp. Service cadence, looping/end-frame handling, playback rate, visibility and interruption must be accounted for. It must not be calculated with the fixed 24-fps blend helper unless the actual clip rate warrants that conversion.
+
+### Precisely what is needed from PANZERV
+
+**Required access:** read-only access in a local research session on PANZERV, or an explicitly connected read-only filesystem, to the installed BFG **`base` folder including its `.resources` containers and subdirectories**. Steam's Browse local files command identifies the actual installation. A conventional example is `<Steam library>\steamapps\common\DOOM 3 BFG Edition\base`; this is a path template, not a verified path on PANZERV. No game executable needs to be run, and no raw licensed files need to be uploaded to GitHub or attached to this cloud conversation.
+
+Container filenames cannot yet be narrowed honestly to a particular `pakNNN.resources`. The source indexes virtual filenames with offsets and lengths (`neo/framework/File_Resource.h:52–66`), and the ordinary extraction branch reads those byte ranges directly (`neo/framework/File_Resource.cpp:342–350`). A local read-only index inspection can locate only the following dependency chain; it does not require running the game or extracting the whole installation. The header/table interpretation is at `neo/framework/File_Resource.cpp:68–91`. This describes a source-confirmed inspection route, not an extractor implemented or tested on retail data during this session.
+
+| Required logical files/declarations | Why needed / limits on the request |
+|---|---|
+| `script/weapon_shotgun.script`, `script/weapon_base.script` | Actual fire/reload/pump states, constants, launch arguments, waits and interruption rules |
+| Their referenced includes/helpers; begin with `script/doom_main.script`, `script/doom_defs.script`, `script/doom_events.script`, `script/doom_util.script` if referenced | Resolve constants and helper functions; these startup script paths are named in `neo/framework/FileSystem.cpp:822–827`, but their contents remain unavailable |
+| `weapon_shotgun`, its effective `weapon_scriptobject`, `def_projectile`, and inherited declarations; `projectile_bullet_shotgun` is the known starting name | Effective clip/recoil/effects/projectile settings; follow actual references instead of assuming a physical `def/weapon_shotgun.def` filename |
+| Referenced projectile/damage/brass definitions, all their parents and relevant `_mp` alternatives | Resolve projectile class, pellet damage, launch flags, ejection and mode-dependent values |
+| Model definitions selected by `model_view`/`model_world`, parents, animation aliases/variants and frame-command blocks | Map script clip names to real assets and sound/effect markers |
+| Only the referenced `.md5anim` files or `generated/anim/...bMD5anim` counterparts | Prove frame rates, lengths and pump/hand/mechanism curves |
+| Referenced mesh skeletons, as `.md5mesh` or supported generated `.bmd5mesh` files | Resolve joint names, hierarchy, rest pose and attachment geometry where needed; textures are not required for timing |
+| Referenced sound declarations (`snd_*` targets/frame-command sounds) | Identify cues; audio sample metadata is needed only if script behavior actually depends on returned sound duration |
+
+Also record installation/build identity, game mode and mod status. For Steam, read the local `steamapps\appmanifest_208200.acf` build metadata if present (the application's ID is corroborated by `README.txt:20–21`), plus executable version/hash without executing it. This is provenance, not a claim that the public source commit exactly matches every shipped binary.
+
+If launch options/configuration use `fs_basepath`, `fs_savepath`, `fs_game` or `fs_game_base`, include only the corresponding active game-data/override directories and relevant configuration values. `SetupGameDirectories` adds both base and save paths (`neo/framework/FileSystem.cpp:2477–2484`); `Startup` adds alternate/main mod directories (`2545–2562`). Record `fs_resourceLoadPriority` and animation/model binary-loading settings if overridden. The user's whole Windows profile, saved games and unrelated projects are unnecessary. The initial request is the BFG `base` folder; broaden only to dependencies/overrides actually identified there or in supplied launch settings.
+
+### Evidence to save once local access exists
+
+For each fact, record installation build, mode, physical container or loose path, SHA256, virtual path, declaration/function and source line (or binary byte offset/field), then distinguish a literal, inherited default, runtime override and derived result. Keep this factual record in the research documents; keep raw retail scripts/assets local.
+
+The missing deliverable is a retail state/timing table covering: launch acceptance; count/spread and ammo cost; next-fire gate; pump/cycle completion; shell insertion and reload interruption; ejection; sound/flash markers; visual/camera recoil parameters; and every selected animation variant. Use relative times from a successful launch, preserving each clock and unit. If a result depends on runtime conditions, report the condition instead of one invented constant.
+
+**Completion boundary:** all available Task 1 work is retained, and the remaining source-based interpretation and local evidence requirements for Task 2 are now recorded. Exact retail values, curves and state sequences remain unverified. No runtime tests, local archive inspection or retail-value recovery are claimed. The single next action is to make the BFG `base` folder on PANZERV available read-only to a research session; providing a Windows path in this cloud chat alone is insufficient.
+
 ## Checkpoint and validation record
+
+The 2026-10-10 continuation checked 31 new source path/range groups for valid bounds, reviewed the cited implementations, checked balanced document fences and passed `git diff --check`. The original source-identity section and sections 1–11 were verified byte-for-byte unchanged from `7ae6c7d`; all five earlier research commits remain ancestors. Changes remain limited to this report and the handoff. These are documentation/static-source checks, not runtime tests. The handoff records the verified publication checkpoint.
 
 The initial source findings were pushed as `266cc83679677427ec442f8d3972a091bd378c19`. After interruption, the working tree was clean and three completed scratch notes survived; those were preserved in pushed checkpoint `a40eb56954cb2cffe152de1ef0f11053e14b5d7a` before consolidation. That commit retains the original recovered notes in history; this report incorporates their findings with reviewed corrections, including mutable damage feedback, ellipse view-axis aiming, the physics function reference, client guards and sound lookup.
 

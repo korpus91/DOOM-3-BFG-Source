@@ -1,6 +1,6 @@
 # Doom BFG weapon research handoff
 
-**Status: Task 1 source investigation and original Godot design complete; exact retail shotgun reconstruction PARTIAL. Task 2 is authorized and its availability check is complete, but retail inspection is BLOCKED on locating the user's game data.** The user's latest instruction is “Go ahead with task 2.” This approves the previously proposed local read-only retail-data research, not implementation. Do not ask for the same approval again.
+**Current status, 2026-10-10: Task 1 source investigation and original Godot design complete; Task 2 source-only continuation complete; exact retail shotgun reconstruction PARTIAL / BLOCKED on read-only access to PANZERV's BFG installation.** The user explicitly authorized continuation, committing/pushing progress and updating existing PR #1, while preserving all work and leaving Shooter 1946 untouched. No approval is missing. The earlier “Go ahead with task 2” instruction and checkpoints below are historical context, not a pending approval or instruction to restart.
 
 ## Objective and exact source identity
 
@@ -14,7 +14,19 @@ Research Doom 3 BFG Edition (2012) weapon mechanics beginning with the shotgun, 
 - Required `neo/d3xp/Weapon.cpp` and `Weapon.h` exist and were compared byte-for-byte to official raw files at that SHA. Both master refs matched it. GitHub API confirms the fork parent. This is BFG; `doomclassic` and non-BFG Doom 3 were not substituted.
 - Task began 2026-10-09 02:27 UTC, paused after a usage interruption, and resumed at approximately 15:45 UTC. The user's 20–30 minute timebox applies to active work; do not mistake the long interruption for active research time. Do not expand this task to use additional budget.
 
-## Last verified checkpoint and recovery
+## Current recovery and continuation checkpoint — 2026-10-10
+
+- Exact resume head: **`7ae6c7dc0e22ebe66c1da394c21d723f023894a9`**, verified in PR #1 and fetched from the existing fork. Task 2 had stopped after the no-retail-files availability check and section 11's resource precedence/entity-inheritance findings. No retail script, definition or animation had been inspected.
+- The current local checkout initially contained only clean branch `work` at `1caba1979589971b5ed44e315d9ead30b278d8b4`; no untracked/ignored repository files or stash existed. Its reflog showed environment setup returning to the source base. Restored the existing remote research branch in the same checkout using fetch and switch, preserving all five research ancestors. No reset, new repository, reinstall or environment creation was performed by this continuation.
+- The historical `/tmp/bfg-recoil-findings.md`, `/tmp/bfg-firing-findings.md` and `/tmp/bfg-projectile-findings.md` were absent in this session. Their previously preserved text remains in commit `a40eb56954cb2cffe152de1ef0f11053e14b5d7a`; the consolidated report remains intact. This cannot certify the contents of any unsaved memory from a previous session.
+- User confirmed retail location: **Windows PC PANZERV**. This cloud's network snapshot has `vpn_configured: false` and no TCP destinations configured; no filesystem connection to PANZERV was supplied. Do not pretend a Windows path is readable here. Do not repeat the earlier archive/directory search.
+- New verified findings are in report **section 12**: script wait/getTime clock differences; manual-thread wait semantics; shared weapon animation-end/blend fields; `_mp` declaration selection; reload inventory transfer; animation aliases/inheritance/variants; text clip length versus blend frames; binary `.bMD5anim` and generated mesh loading; frame-command timing interpretation; and exact local-file/provenance requirements. Task 1's investigation/design was preserved rather than repeated.
+- **Next action for the user:** make the installed BFG `base` folder on PANZERV accessible read-only to a local research session or explicitly connected filesystem. Example only: `<Steam library>\steamapps\common\DOOM 3 BFG Edition\base`. It must include containers/subdirectories; do not request that licensed assets be uploaded to GitHub or this chat. Read report section 12's dependency table before narrowing the request. Additional access is limited to identified active overrides and build metadata.
+- **Exact next research step after access:** inspect only that installation's resource indexes and active loose overrides; resolve the two weapon scripts and referenced declarations/models/animation binaries; record the actual state/launch/timing and recoil facts with provenance. No research remains blocked on permission, installation of tools or another C++ overview.
+- **Still unknown:** retail launch event/count/spread, effective damage/projectile tuning, recoil values, shotgun state transitions, fire/pump/reload/ejection timings, clip variants/curves, sound cues and installed multiplayer overrides. Source rules are verified; retail behavior and runtime observations are not.
+- Publication is to the same branch and **fork-only PR #1**, unmerged. Use the live Git/PR tip for the latest commit rather than any historical full-report SHA below. Only the two research documents may change. A final publication record follows after commit/push verification.
+
+## Historical Task 1 checkpoint and recovery
 
 1. Before interruption, commit `266cc83679677427ec442f8d3972a091bd378c19` was pushed to the research branch. On resume, native Git again verified that remote SHA and the working tree was clean. This was the last completed, verified action from the interrupted research pass.
 2. Three completed scratch notes survived at `/tmp/bfg-recoil-findings.md`, `/tmp/bfg-firing-findings.md` and `/tmp/bfg-projectile-findings.md`. No uncommitted repository changes were lost. Their findings had not yet been incorporated into the first GitHub checkpoint.
@@ -41,7 +53,7 @@ Research Doom 3 BFG Edition (2012) weapon mechanics beginning with the shotgun, 
 
 A second read-only review checked the core source claims. Corrections incorporated: attacker DamageFeedback can modify damage before subtraction; ellipse direction also uses playerViewAxis; idEntity::RunPhysics begins at Entity.cpp:2603, with its evaluation call at2645; immediate fuse-zero physics is server/local-prediction guarded; sound lookup uses mutable spawnArgs. These details supersede imprecise wording in the raw recovered notes. No source file was edited.
 
-## Continuation instructions: publication already verified
+## Historical Task 1 publication instructions
 
 Do not repeat source verification, completed research, PR creation or the ready-for-review action. Source review, 54 source path/line-bound checks, two balanced diagram fences and `git diff --check` passed. Comparison with source base and GitHub's PR-file API found only the two intended documents. Shooter 1946 and gamedev-studio working trees remained clean. No game or Godot runtime tests were run.
 
@@ -57,7 +69,7 @@ The repository expressly excludes game data (README.txt:15). The only tracked `.
 
 **Task 2 is now approved:** read-only inspection of locally available, legally owned BFG retail `script/weapon_shotgun.script` and `script/weapon_base.script`, plus `weapon_shotgun`, `projectile_bullet_shotgun`, their referenced damage definitions and relevant animation declarations. Record factual values/state transitions with exact local provenance. Do not publish full licensed scripts or assets. Do not use non-BFG data to fill gaps.
 
-## Task 2 checkpoint and exact next steps
+## Historical Task 2 checkpoint — 2026-10-09
 
 Task 2 started on 2026-10-09 by inspecting the existing handoff, clean working trees and GitHub PR. The last verified Task 1 head was `2002d9b73746a01654cb7068ffdaf560566d4165`. Preserve it and all prior findings; continue on the existing research branch and fork-only PR, changing only the two research documents.
 
