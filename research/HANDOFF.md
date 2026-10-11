@@ -1,6 +1,10 @@
+# Latest verified state — 2026-10-10
+
+Data04 extraction is complete: 267/267 files passed original CRC32/size validation. Data01–03 payloads remain pending; all four indexes are decoded. The user expanded scope to all guns. Read the self-contained Claude handoff at the end of this file. No extraction process is running.
+
 # Doom BFG weapon research handoff
 
-**Current status, 2026-10-10: Task 1 and Task 2 source-only research complete; retail shotgun reconstruction PARTIAL / BLOCKED on unpacked BFG data. PANZERV local Windows access is verified. The user-identified D:\Games location contains BFG installer packages, not an accessible installed base folder; existing 7-Zip cannot list them.** The user explicitly authorized continuation, committing/pushing progress and updating existing PR #1, while preserving all work and leaving Shooter 1946 untouched. No approval is missing. The earlier “Go ahead with task 2” instruction and checkpoints below are historical context, not a pending approval or instruction to restart.
+**Historical status before package extraction, 2026-10-10: Task 1 and Task 2 source-only research complete; retail shotgun reconstruction PARTIAL / BLOCKED on unpacked BFG data. PANZERV local Windows access is verified. The user-identified D:\Games location contains BFG installer packages, not an accessible installed base folder; existing 7-Zip cannot list them.** The user explicitly authorized continuation, committing/pushing progress and updating existing PR #1, while preserving all work and leaving Shooter 1946 untouched. No approval is missing. The earlier “Go ahead with task 2” instruction and checkpoints below are historical context, not a pending approval or instruction to restart.
 
 ## Latest local checkpoint — 2026-10-10
 
@@ -117,3 +121,98 @@ The report's new section 11 records source-confirmed BFG `.resources` handling, 
 The user explicitly authorized unpacking every Doom/BFG candidate under `D:\Games` and set an active completion goal. Section 14 now supersedes the previous assumption that no archive inspection route exists: all four BFG FreeArc indexes were decoded with CRC checks (399 files), and the BFG installer metadata plus all 22 embedded files passed SHA1 verification. Bundled archiver components were recovered without running setup. Local extraction is proceeding via a dedicated .NET helper with a larger worker-stack reservation. The original package files are unchanged. Both collection ISOs' Doom-content directories have been extracted locally; nested installers remain separate, and no non-BFG weapon values are used.
 
 Scratch/helper/index/output directory: `C:\Users\Korpus\Workbench\Inbox\2026-10-10-bfg-package-inspection`. Resume the running extraction, validate output CRCs against the package indexes, then inspect the resource indexes and exact shotgun dependencies per sections 11–12. Never execute game or installer binaries/scripts or upload licensed data. Only the two research documents are committed. This is an intermediate factual checkpoint, not completion of retail reconstruction.
+
+
+---
+
+# Claude handoff — Doom 3 BFG — 2026-10-10
+
+## Start here: confirmed state
+
+You are continuing an existing research task, not starting over. Verify your shell is on **PANZERV** (DNS `PanzerV`) before accessing these paths. A cloud-only Claude session cannot read them. The user now wants all Doom/BFG packages under `D:\Games` unpacked and research expanded from the shotgun to **all guns**. Do extraction and verification yourself; no more approval is required within that scope.
+
+**Data04 is successfully extracted:** 267/267 files, 16,457,224 bytes, every original file CRC32 and size matched; zero missing/bad files. **Data01–03 are indexed but their payloads are not extracted.** No decoder process was running at handoff. No retail weapon values have yet been recovered. Earlier claims that no extraction route exists are superseded.
+
+## Exact locations
+
+**Repository:** `C:\Users\Korpus\Workbench\Projects\Code\2026-10-10-DOOM-3-BFG-Source`
+
+Read `research\HANDOFF.md` and `research\DOOM_BFG_WEAPON_RESEARCH.md`, especially sections **11–12** (precedence, inheritance, multiplayer selection, timing/provenance) and **13–14** (local package investigation). Source code is under this checkout's `neo\`; official source base is `1caba1979589971b5ed44e315d9ead30b278d8b4`. Completed source research must not be repeated.
+
+**GitHub:** https://github.com/korpus91/DOOM-3-BFG-Source — branch `research/doom-bfg-weapons-task1` — existing PR https://github.com/korpus91/DOOM-3-BFG-Source/pull/1. Last independently verified head before saving this handoff: `6cd17351318de4a34a2401f19f08725185ea950c`; both remote documents matched. This handoff is a later checkpoint: fetch the live tip, never roll back to that SHA. Preserve history/work; no new branch/PR, reset, clean, force push, merge, or upstream push.
+
+**Original BFG packages:** `D:\Games\[dixen18] DOOM 3 BFG Edition\Data01.dxn`, `Data02.dxn`, `Data03.dxn`, `Data04.dxn`, `Setup.exe`. Use PowerShell `-LiteralPath` for brackets. Original SHA256 hashes are in report section 13.
+
+**Other original Doom packages:** `D:\Games\DOOM 3 Collection\DVD1.iso` and `DVD2.iso`. These are older Doom III/expansion/mod collections; never substitute their values for BFG.
+
+**All local working copies, helpers and indexes:**
+`C:\Users\Korpus\Workbench\Inbox\2026-10-10-bfg-package-inspection`
+
+Within that directory:
+
+| Relative path | Contents / status |
+|---|---|
+| `bfg-Data04\` | Correct, CRC-verified Data04 extraction. Includes `Doom3BFG.exe`, `goggame-1135892318.info`, `base\default.cfg`, classic music, libraries. No weapon scripts/resource containers in this package. |
+| `Data01.dxn.index.json` through `Data04.dxn.index.json` | CRC-validated FreeArc directory indexes: paths, sizes, original file CRCs, compressed block offsets/methods. 399 files total. |
+| `Data04-solid.lolz` | Original compressed block, 7,031,713 bytes. |
+| `Data04-stage.srep` | Successfully decoded LOLZ output, 15,052,192 bytes. |
+| `Data04-srep.arc` | Synthetic scratch wrapper around that SREP stream, 15,059,019 bytes; retains original file sizes/CRCs. Used for successful extraction. |
+| `bundled-decoders\` | Six archive-decoder components recovered from Setup.exe, plus local `CLS.ini`. Components' stored SHA1 checks passed. These are unpacking tools, not game executables. |
+| `dvd1\` | Extracted Doom folders: `Doom_III_Nightmare`, `Doom_III_Phobos_Anomaly`, `Doom_III_Resurrection_of_Evil`. 20 files / 4,252,992,367 bytes. |
+| `dvd2\` | Extracted Doom folders: `Doom_III`, `Doom_III_New_Star_Station`, `Doom_III_Padshiy_Angel`. 12 files / 4,342,431,456 bytes. |
+| `unpacked-Data04.dxn\base\default.cfg` | **Failed attempt: zero-byte file. Do not use it.** No need to delete it. |
+| `2026-10-10-claude-file-manifest.json` | 337-file snapshot with exact paths/sizes; SHA256 for helpers, decoder components and all Data04 outputs. Created before the last two helpers below, so they are not listed in that snapshot. |
+
+## Working code and extraction route
+
+All filenames below are inside the scratch directory above:
+
+- `2026-10-10-inspect-arc.py`: reads the original four package indexes; checks descriptor/directory CRC32; outputs JSON. It prints long inventories, so redirect stdout if rerunning.
+- `2026-10-10-unpack-inno-tools.py`: recovers six decoder components and verifies all 22 embedded files using saved `bfg-inno-payload.bin` and `bfg-inno-entries.json`.
+- `2026-10-10-archive-host.cs` and `.exe`: **working x86 .NET extraction host** using bundled `unarc.dll`; executable's default stack was patched to 32 MiB. Run from `bundled-decoders`. It refuses overwrites.
+- `2026-10-10-stage-arc.py`: wraps `<DataNN>-stage.srep` as `<DataNN>-srep.arc`, preserving original file CRCs/sizes. Validated end-to-end on Data04. Synthetic timestamps are placeholders, not original provenance.
+- `2026-10-10-copy-solid.py`: new convenience helper to copy the original compressed solid block for Data01/02/04 using its index. Source is read-only; destination is exclusive-create. Not yet run on Data01/02.
+- `2026-10-10-validate-extracted.py`: streams extracted files against original index sizes/CRC32. Passed for Data04; use it for subsequent extractions.
+- `2026-10-10-decode-bfg.ps1`: **failed earlier host, do not use.** PowerShell-hosted unarc hit stack overflow. Direct combined `srep_old+lolz` extraction via the compiled host then stalled in piped LOLZ; those task-owned processes were stopped. The two-stage route below solved Data04.
+
+Example continuation for **Data01**, then repeat for **Data02**. This route is proven for Data04, not yet these larger packages. Do not overwrite an existing intermediate; inspect/reuse it or use a fresh destination.
+
+```powershell
+$s = 'C:\Users\Korpus\Workbench\Inbox\2026-10-10-bfg-package-inspection'
+Set-Location -LiteralPath "$s\bundled-decoders"
+python "$s\2026-10-10-copy-solid.py" Data01
+& '.\cls-lolz_x64.exe' d "$s\Data01-solid.lolz" "$s\Data01-stage.srep"
+# Check the decoder exit code and output before proceeding.
+python "$s\2026-10-10-stage-arc.py" Data01
+New-Item -ItemType Directory -Path "$s\bfg-Data01" -Force | Out-Null
+& "$s\2026-10-10-archive-host.exe" "$s\bundled-decoders" "$s\bfg-Data01" "$s\Data01-srep.arc"
+python "$s\2026-10-10-validate-extracted.py" Data01 bfg-Data01
+```
+
+Data01: 18 files / 1,553,970,890 unpacked bytes, method `srep_old+lolz`; contains separate **ENGTEXT/RUSTEXT** `_common.resources` and `_ordered.resources`, plus English/Russian voice groups. **This is the next useful BFG research target.** Keep language variants separate.
+
+Data02: 63 files / 6,389,005,568 bytes, same method; map resource containers. Inspect relevant duplicates and map-loading precedence.
+
+Data03: 51 files / 277,060,544 bytes, method **`bpk+srep_old`**. Do not use the LOLZ helper for it. Bundled `cls-bpk.dll` and `cls-srep_old.dll` exist. Try the compiled archive host on the original Data03 package into a fresh `bfg-Data03` directory, then validate. This is **untested**, and the Bink group may not affect weapon research.
+
+Other collection folders contain nested Inno installers (5.0.4, 5.1.2, 5.3.9) and a Wise installer in Nightmare. Existing 7-Zip lists Nightmare's setup as ZIP with errors; nested payloads are not fully unpacked. Existing tool: `C:\Program Files\7-Zip\7z.exe`. Do not execute setup. Keep non-BFG results separate.
+
+## Saved parser data / reproducibility
+
+`bfg-inno-header-0.bin` (187,364 bytes), `bfg-inno-header-1.bin` (1,628 bytes), `bfg-inno-payload.bin` (5,799,743 bytes), and `bfg-inno-entries.json` were created by inline Python, not a saved general-purpose Inno extractor. All header/subblock CRCs and 22 embedded-file SHA1s passed. Setup.exe's Inno signature starts at byte 2,399,494; header streams at 2,399,558 and 2,426,249; `zlb\x1a` payload marker at 279,552. Exact layouts are documented in report section 14.
+
+Downloaded **text references only**, also in scratch: `ArhiveStructure.hs`, `ArhiveDirectory.hs`, `ByteStream.hs`, `ArcCommand.h`, `unarcdll.cpp`, `UnarcDllExample.cpp` (mirror/freearc); `inno-stream-block.cpp`, `inno-stream-chunk.cpp`, `inno-stream-lzma.cpp`, `inno-loader-offsets.cpp`, `inno-setup-data.cpp`, `inno-exefilter.hpp` (dscharrer/innoextract). Their source URLs are in the research report. No innoextract/FreeArc installation occurred. The only compilation was our small inspection host using existing `C:\Windows\Microsoft.NET\Framework\v4.0.30319\csc.exe`.
+
+## Research after extraction
+
+Resolve BFG resource indexes, active virtual-file precedence, inherited entity/model declarations, and multiplayer selection separately before reporting values. Start with `script/weapon_shotgun.script`, `script/weapon_base.script`, their includes, weapon/projectile/damage/brass declarations, every referenced animation variant, generated `.bMD5anim`, skeletons and sound/effect markers. Then expand the dependency inventory to all guns, as the user requested. Do not assume extraction proves which language/mod/mode was active on this PC.
+
+Track pellet/projectile count/spread/damage; visual and camera recoil; successful-launch-to-successful-launch cadence; pump/reload/ammo-transfer/ejection; sound/effect boundaries. Distinguish script clocks, animation lengths, 24-fps blend units, clip frame rates, nominal markers and runtime timing. Record physical path/hash, virtual path, exact lines or binary offsets, inheritance provenance and calculations. No runtime measurements have been made.
+
+Recovered GOG metadata identifies game `1135892318`, build `50332792385232087`, English. Executable version resources read **FileVersion 1.0.0.1**, **ProductVersion 1.0.34.6456**. These are package identity facts, not a verified installed/active build or a guarantee of exact agreement with the public C++ source.
+
+## Local / Dropbox / cloud and constraints
+
+All original packages and extracted licensed data are **local on PANZERV only**. Dropbox's configured local root is **`D:\Dropbox`**, but this task placed no copies there and performed no Dropbox upload; remote Dropbox contents were not checked. **GitHub contains factual research documents only**, not extracted assets, decoder binaries, helpers or the local manifest. Historical `/workspace/DOOM-3-BFG-Source` refers to a prior cloud session; no current cloud asset copy is established. A cloud-only Claude must obtain local access, not pretend these Windows paths are mounted.
+
+Keep original packages read-only. Do not install tools, run game/setup executables or extracted installer/game scripts, modify unrelated Workbench/Shooter 1946/gamedev-studio files, implement Godot, or upload licensed assets. The user authorized extraction and use of the bundled archive decoders. Only `research/HANDOFF.md` and `research/DOOM_BFG_WEAPON_RESEARCH.md` may change inside the repository. Commit/push factual progress to the existing branch, update PR #1, leave it unmerged, and verify remote head plus both document contents before claiming publication. No background extraction or scheduled automation is active. Codex's goal bookkeeping last reported `usageLimited`, not complete; the research remains unfinished.

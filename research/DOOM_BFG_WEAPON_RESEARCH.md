@@ -1,6 +1,10 @@
+# Latest local extraction status — 2026-10-10
+
+Data04 is successfully unpacked and verified; Data01–03 still require payload extraction. See the new checkpoint at the end and the self-contained Claude handoff. Earlier packaging-blocker statements are historical. No retail weapon values are yet resolved.
+
 # Doom 3 BFG weapon research for Shooter 1946
 
-**Task 1 source investigation and original controller design completed. Task 2's source-only continuation is completed; exact retail shotgun reconstruction remains PARTIAL. Local Windows access to PANZERV was verified on 2026-10-10, but an unpacked BFG installation was not located. The user-identified D:\Games location contains BFG installer packages that the existing archive tool cannot list.** Section 12 records the 2026-10-10 continuation and precise data requirements. The public C++ source confirms the execution machinery, but omits the scripts, definitions and animation assets that specify the retail shotgun's numbers and choreography. No game was compiled or run, no tools were installed, and no Shooter 1946 files or assets were changed.
+**Historical status before successful package decoding. Task 1 source investigation and original controller design completed. Task 2's source-only continuation is completed; exact retail shotgun reconstruction remains PARTIAL. Local Windows access to PANZERV was verified on 2026-10-10, but an unpacked BFG installation was not located. The user-identified D:\Games location contains BFG installer packages that the existing archive tool cannot list.** Section 12 records the 2026-10-10 continuation and precise data requirements. The public C++ source confirms the execution machinery, but omits the scripts, definitions and animation assets that specify the retail shotgun's numbers and choreography. No game was compiled or run, no tools were installed, and no Shooter 1946 files or assets were changed.
 
 In plain English: pressing fire sets a signal for a weapon script. That script decides when a shot actually happens. The engine moves the visible gun and kicks the camera using separate calculations. Its ordinary multi-projectile event spends ammunition once, creates independently scattered pellets, and lets each collision damage its target separately. Pumping, hand movement and firing cadence cannot be reconstructed fully without the missing retail data.
 
@@ -535,3 +539,12 @@ Only the packaged archive-decoding dependencies (`unarc.dll`, `cls-srep_old.dll`
 ### Collection ISO inspection
 
 Both `DOOM 3 Collection` ISO images were opened by existing 7-Zip. Their Doom-content directories were copied locally: DVD1 yielded 20 files / 4252992367 bytes; DVD2 yielded 12 files / 4342431456 bytes. Disc 1 identifies Nightmare, Phobos Anomaly, and Resurrection of Evil; disc 2 identifies Doom III, New Star Station, and Padshiy Angel. Their nested installers identify Wise or older Inno formats (5.0.4, 5.1.2, 5.3.9). No BFG resource layout was established from these collection entries. They remain separate from the BFG package, and no original-Doom-3 value is substituted for BFG evidence.
+
+
+### Verified Data04 extraction and Claude handoff
+
+The working route separates LOLZ decoding from SREP extraction. Direct combined decoding stalled; its processes were stopped. The bundled `cls-lolz_x64.exe` decoded Data04's physical solid block (offset 31, length 7031713) to a 15052192-byte SREP stream. A synthetic local FreeArc wrapper preserved original file sizes/CRCs; the compiled inspection host unpacked it to `C:\Users\Korpus\Workbench\Inbox\2026-10-10-bfg-package-inspection\bfg-Data04`. Independent streaming verification passed **267/267 files, 16457224 bytes, zero missing or mismatched files**. No game or setup was executed. Scratch wrapper timestamps are synthetic and are not source provenance.
+
+Recovered `goggame-1135892318.info` SHA256: `c55db49ea749f39f65bbb315d0cf25190df20fe3e8ad7b76633002fce2f83082`; line 2 buildId `50332792385232087`, line 4 gameId `1135892318`, line 5 language `English`, line 9 title `DOOM3: BFG Edition`. Read-only PE version metadata from `Doom3BFG.exe`: FileVersion `1.0.0.1`, ProductVersion `1.0.34.6456`. Executable SHA256 is recorded in the local file manifest. These identify package contents, not an active installation or source/binary equivalence. Data04 contains no weapon script/resource payload, so the weapon research remains incomplete.
+
+The user expanded the research scope to all guns and requested a Claude handoff. Exact original/extracted/helper paths, known failures, working commands and next steps are in `research/HANDOFF.md` and the standalone local `C:\Users\Korpus\Workbench\Outputs\2026-10-10-doom-bfg-claude-handoff.md`. The local manifest is `C:\Users\Korpus\Workbench\Inbox\2026-10-10-bfg-package-inspection\2026-10-10-claude-file-manifest.json`. All licensed payloads remain local. No copies were placed in Dropbox. No decoder process is running at handoff.
